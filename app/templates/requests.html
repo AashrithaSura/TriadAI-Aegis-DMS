@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Access requests{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+  <div class="page-head d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <div class="eyebrow"><i class="bi bi-inbox"></i> Access control</div>
+      <h1 class="h2 fw-bold mb-1">Access requests</h1>
+      <p class="text-muted mb-0">Approve downloads for your division's documents and track your own requests.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <span class="stat-chip"><span class="stat-value" id="incomingCount">0</span><span class="stat-label">incoming pending</span></span>
+      <span class="stat-chip"><span class="stat-value" id="outgoingCount">0</span><span class="stat-label">my pending</span></span>
+    </div>
+  </div>
+
+  <ul class="nav nav-pills mb-4 gap-2" id="requestTabs">
+    <li class="nav-item"><button class="nav-link active" data-type="incoming"><i class="bi bi-inbox me-1"></i>Incoming</button></li>
+    <li class="nav-item"><button class="nav-link" data-type="outgoing"><i class="bi bi-send me-1"></i>My requests</button></li>
+    <li class="nav-item"><button class="nav-link" data-type="all"><i class="bi bi-collection me-1"></i>All</button></li>
+  </ul>
+
+  <div id="requestsError" class="alert alert-danger d-none"></div>
+  <div id="requestsList">
+    <div class="text-center text-muted py-5"><span class="spinner-border spinner-border-sm me-2"></span>Loading requests…</div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/requests.js') }}"></script>
+{% endblock %}

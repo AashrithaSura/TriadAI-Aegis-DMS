@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aegis DMS — Project Report</title>
+<style>
+  :root {
+    --ink: #111827;
+    --muted: #4b5563;
+    --brand: #4f46e5;
+    --brand-dark: #312e81;
+    --line: #e5e7eb;
+    --soft: #f5f6fa;
+  }
+  * { box-sizing: border-box; }
+  @page { size: A4; margin: 18mm 16mm; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    font-size: 10.5pt;
+    line-height: 1.55;
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; color: var(--brand-dark); margin: 0; }
+  h2 { font-size: 20pt; margin: 0 0 4mm; padding-bottom: 2.5mm; border-bottom: 2px solid var(--brand); }
+  h3 { font-size: 12.5pt; margin: 6mm 0 2mm; color: var(--ink); }
+  h2, h3 { page-break-after: avoid; }
+  p { margin: 0 0 3mm; }
+  ul, ol { margin: 0 0 3mm; padding-left: 6mm; }
+  li { margin-bottom: 1.4mm; }
+  code {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 8.8pt;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0 3px;
+  }
+  pre {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 8pt;
+    line-height: 1.42;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 4mm 5mm;
+    border-radius: 3mm;
+    overflow: hidden;
+    white-space: pre-wrap;
+    margin: 0 0 4mm;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 4mm; font-size: 8.9pt; page-break-inside: avoid; }
+  th {
+    text-align: left;
+    background: var(--brand-dark);
+    color: #fff;
+    font-weight: 600;
+    padding: 1.8mm 2.4mm;
+  }
+  td { border-bottom: 1px solid var(--line); padding: 1.7mm 2.4mm; vertical-align: top; }
+  tr { page-break-inside: avoid; }
+  tr:nth-child(even) td { background: #fafafc; }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .cover {
+    height: 296.5mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(145deg, #1e1b4b 0%, #312e81 45%, #4f46e5 100%);
+    color: #fff;
+    margin: -18mm -16mm -18mm;
+    padding: 26mm 24mm 22mm;
+  }
+  .cover .eyebrow { letter-spacing: .32em; font-size: 9pt; text-transform: uppercase; color: #c7d2fe; }
+  .cover h1 { color: #fff; font-size: 46pt; line-height: 1.02; margin: 9mm 0 3mm; }
+  .cover .greek { font-family: Georgia, serif; font-style: italic; font-size: 15pt; color: #c7d2fe; }
+  .cover .rule { width: 28mm; height: 1.4mm; background: #a5b4fc; margin: 8mm 0; }
+  .cover .subtitle { font-size: 14pt; color: #e0e7ff; max-width: 130mm; line-height: 1.5; }
+  .cover .meta { font-size: 9.5pt; color: #c7d2fe; line-height: 1.9; border-top: 1px solid rgba(255,255,255,.25); padding-top: 5mm; }
+  .cover .meta strong { color: #fff; font-weight: 600; }
+  .toc ol { padding-left: 5mm; }
+  .toc li { margin-bottom: 2.2mm; font-size: 10.5pt; }
+  .callout {
+    background: #eef2ff;
+    border-left: 3px solid var(--brand);
+    border-radius: 0 2mm 2mm 0;
+    padding: 3mm 4mm;
+    margin: 0 0 4mm;
+    font-size: 9.6pt;
+  }
+  .callout strong { color: var(--brand-dark); }
+  .grid-2 { display: flex; gap: 5mm; margin-bottom: 4mm; }
+  .grid-2 > div { flex: 1; }
+  figure { margin: 0 0 5mm; }
+  figure img {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 2mm;
+    box-shadow: 0 2px 6px rgba(15,23,42,.10);
+  }
+  figcaption { font-size: 8.6pt; color: var(--muted); margin-top: 1.8mm; text-align: center; }
+  .tag {
+    display: inline-block;
+    font-size: 7.6pt;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    background: #eef2ff;
+    color: var(--brand-dark);
+    border-radius: 10px;
+    padding: 1px 7px;
+    margin-right: 2mm;
+  }
+  .kv td:first-child { width: 38mm; font-weight: 600; color: var(--muted); }
+  .small { font-size: 8.8pt; color: var(--muted); }
+  .no-break { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================= COVER ============================= -->
+<section class="cover page">
+  <div>
+    <div class="eyebrow">Triad AI · Internship Assignment</div>
+    <h1>Aegis DMS</h1>
+    <div class="greek">Αἰγίς — the shield</div>
+    <div class="rule"></div>
+    <div class="subtitle">A secure document management system with dynamic metadata, division isolation, cross-division access requests, OCR search and private previews.</div>
+  </div>
+  <div class="meta">
+    <strong>Prepared by</strong> &nbsp;Aashritha Sura<br>
+    <strong>Stack</strong> &nbsp;Python 3.11 · Flask 3 · MongoDB 7 · GridFS · Tesseract<br>
+    <strong>Delivered</strong> &nbsp;17 November 2026<br>
+    <strong>Repository</strong> &nbsp;Aegis DMS (single-repository submission)
+  </div>
+</section>
+
+<!-- ============================= TOC ============================= -->
+<section class="page toc">
+  <h2>Contents</h2>
+  <ol>
+    <li>Project overview</li>
+    <li>Assignment requirements and how they are met</li>
+    <li>System architecture</li>
+    <li>Data model</li>
+    <li>Roles, division isolation and the access-request workflow</li>
+    <li>Dynamic metadata</li>
+    <li>OCR pipeline and search</li>
+    <li>User interface walkthrough</li>
+    <li>REST API reference</li>
+    <li>Running the project</li>
+    <li>Testing and verification</li>
+    <li>Security considerations</li>
+    <li>Enhancements beyond the brief</li>
+    <li>Limitations and future work</li>
+  </ol>
+
+  <div class="callout" style="margin-top:14mm">
+    <strong>Executive summary.</strong> Aegis is a complete, production-shaped implementation of the
+    assignment: a Flask REST API backed by MongoDB and GridFS, six responsive UI views, dynamic
+    metadata that is configurable at runtime, hard division isolation with an approval-based sharing
+    workflow, and a search experience that indexes both metadata and OCR text. The full stack runs
+    locally or with one command in Docker, and the supplied starter test passes unchanged.
+  </div>
+
+  <h3>Key facts at a glance</h3>
+  <table class="kv">
+    <tr><td>Backend</td><td>Flask application factory, three blueprints (<code>auth</code>, <code>api</code>, <code>views</code>)</td></tr>
+    <tr><td>Database</td><td>MongoDB 7; document binaries in GridFS bucket <code>documents</code></td></tr>
+    <tr><td>API surface</td><td>22 JSON endpoints, all permission-checked server-side</td></tr>
+    <tr><td>UI views</td><td>Login/Register · Dashboard · Document Details · Requests · Search · Admin Settings</td></tr>
+    <tr><td>OCR</td><td>pypdf text layer → PyMuPDF render + Tesseract fallback; per-document status</td></tr>
+    <tr><td>Automated tests</td><td>10 pytest integration tests + the provided <code>test_api.py</code> smoke test</td></tr>
+    <tr><td>Deployment</td><td>Local Python or Docker Compose (MongoDB + gunicorn + Tesseract)</td></tr>
+  </table>
+</section>
+
+<!-- ============================= 1. OVERVIEW ============================= -->
+<section class="page">
+  <h2>1 · Project overview</h2>
+
+  <p>Organisations rarely store documents in one place. Reports, contracts and scanned records sit in
+  shared folders with little structure, no audit trail, and no reliable way to keep one department's
+  material away from another's. <strong>Aegis DMS</strong> addresses that with a small, well-structured
+  document hub built around three ideas:</p>
+
+  <ul>
+    <li><strong>Structure without redeploying.</strong> Administrators define metadata fields (report type,
+    author, dates, or anything the business needs) in the UI; the upload form, filters and search update immediately.</li>
+    <li><strong>Isolation by default, sharing by consent.</strong> Every document belongs to a division. Users
+    work inside their own division and must request — and be approved for — access to anything else.</li>
+    <li><strong>Findability.</strong> Scanned documents are OCR'd at upload time, so the same search box
+    covers titles, metadata values and the actual text inside files.</li>
+  </ul>
+
+  <p>The application is deliberately dependency-light on the front end: Jinja templates render page shells,
+  and a set of vanilla JavaScript modules talk to the REST API. There is no build step, which keeps the
+  project easy to run and review.</p>
+
+  <h3>Primary user journeys</h3>
+  <ol>
+    <li><strong>Upload and classify</strong> — a user uploads one or more files, fills in dynamic metadata,
+    and receives OCR status and a generated thumbnail for each document.</li>
+    <li><strong>Browse and preview</strong> — the dashboard lists accessible documents with stat cards,
+    filters, sorting and pagination; previews open in-app as authenticated blobs.</li>
+    <li><strong>Request access</strong> — a user who can see that a document exists in another division
+    (via search or a shared link) files a request; the owning division approves or rejects it from an inbox.</li>
+    <li><strong>Search</strong> — a single query searches title, metadata and OCR text, with highlighted
+    snippets explaining why each result matched.</li>
+    <li><strong>Administer</strong> — admins manage metadata fields and divisions; uploaders and admins
+    archive, restore or delete their documents.</li>
+  </ol>
+
+  <h3>What was built</h3>
+  <p>The repository contains the Flask application, the MongoDB schema and seed logic, the OCR pipeline,
+  the responsive front end, a pytest integration suite, the assignment-provided smoke test, Docker
+  packaging, and this report. It is a single self-contained submission.</p>
+</section>
+
+<!-- ============================= 2. REQUIREMENTS ============================= -->
+<section class="page">
+  <h2>2 · Assignment requirements and how they are met</h2>
+
+  <p>The brief asks for a document management system with dynamic metadata, strict division isolation,
+  a cross-division request flow, OCR search, a REST API and six views. Each requirement maps to concrete
+  code, not a mock-up:</p>
+
+  <table>
+    <tr><th style="width:38%">Requirement</th><th>Implementation</th></tr>
+    <tr>
+      <td>Upload documents with custom metadata</td>
+      <td><code>POST /api/documents/upload</code> accepts multipart <code>file</code> plus a JSON
+      <code>metadata</code> object; the record is written to MongoDB and the binary to GridFS in one request.</td>
+    </tr>
+    <tr>
+      <td>List documents filtered by metadata (e.g. <code>?Report Type=Financial</code>)</td>
+      <td><code>GET /api/documents</code> treats any query parameter that matches a configured metadata key
+      as a <code>metadata.&lt;Key&gt;</code> filter, alongside division, archive, sort and pagination parameters.</td>
+    </tr>
+    <tr>
+      <td>Download documents</td>
+      <td><code>GET /api/documents/&lt;id&gt;/download</code> streams from GridFS with a permission check —
+      uploader, owning division, or approved requester.</td>
+    </tr>
+    <tr>
+      <td>Request access to another division's document</td>
+      <td><code>POST /api/access/request</code> creates a pending request; the owning division approves or
+      rejects via <code>/api/access/approve</code> and <code>/api/access/reject</code>.</td>
+    </tr>
+    <tr>
+      <td>Search documents</td>
+      <td><code>GET /api/search</code> searches titles, metadata values and OCR text across the
+      caller's accessible set, returning highlighted snippets.</td>
+    </tr>
+    <tr>
+      <td>Dynamic metadata fields</td>
+      <td>Fields live in the <code>metadata_fields</code> collection and are managed from Admin Settings.
+      Upload, filters and search resolve fields dynamically.</td>
+    </tr>
+    <tr>
+      <td>Role-based access control</td>
+      <td>JWT authentication, division membership, admin-only endpoints, and ownership rules enforced in
+      <code>app/utils.py</code> and applied to every document route.</td>
+    </tr>
+    <tr>
+      <td>Database for metadata and file storage</td>
+      <td>MongoDB collections for users, divisions, fields, documents and requests; GridFS for binaries and thumbnails.</td>
+    </tr>
+    <tr>
+      <td>Six UI views</td>
+      <td>Authentication, Dashboard, Document Details, Access Requests, Advanced Search, Admin Settings.</td>
+    </tr>
+    <tr>
+      <td>Docker (optional)</td>
+      <td><code>Dockerfile</code> + <code>docker-compose.yml</code> run MongoDB and the app (with Tesseract installed) together.</td>
+    </tr>
+    <tr>
+      <td>Starter test must pass</td>
+      <td>The supplied <code>test_api.py</code> uploads anonymously; upload auth is optional by default
+      (<code>REQUIRE_AUTH_FOR_UPLOAD=false</code>) while every read endpoint still requires a token.</td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <strong>Verification.</strong> The repository was run end-to-end on Windows 11: the provided
+    <code>test_api.py</code> reports 1/1 passed, the pytest suite reports 10/10 passed, and the Docker stack
+    was used to capture the screenshots in this report.
+  </div>
+</section>
+
+<!-- ============================= 3. ARCHITECTURE ============================= -->
+<section class="page">
+  <h2>3 · System architecture</h2>
+
+  <p>Aegis follows a conventional three-tier shape. The browser holds no business logic beyond rendering:
+  every permission decision happens on the server, and every data access goes through the API.</p>
+
+<pre>
+ ┌──────────────────────────── Browser ────────────────────────────┐
+ │  Jinja page shells  +  static/js modules (api, dashboard,       │
+ │  document, search, requests, admin, theme, common)              │
+ │  localStorage: JWT  ·  theme preference                         │
+ └───────────────┬──────────────────────────────────────────────────┘
+                 │  fetch()  ·  Authorization: Bearer &lt;jwt&gt;
+ ┌───────────────▼──────────────────────────────────────────────────┐
+ │                        Flask application                         │
+ │  auth_bp  /api/auth/*        views_bp  /  (page shells)          │
+ │  api_bp   /api/documents, /api/access, /api/search,              │
+ │           /api/metadata-fields, /api/divisions, /api/stats       │
+ │  utils.py   RBAC helpers · serializers · pagination              │
+ │  ocr.py     text layer → render → Tesseract · thumbnails         │
+ └───────────────┬──────────────────────────────────────────────────┘
+                 │  PyMongo
+ ┌───────────────▼──────────────────────────────────────────────────┐
+ │                            MongoDB 7                             │
+ │  users · divisions · metadata_fields · documents · access_requests│
+ │  GridFS bucket "documents" (files + thumbnails)                  │
+ └──────────────────────────────────────────────────────────────────┘
+</pre>
+
+  <h3>Request lifecycle</h3>
+  <ol>
+    <li>The browser attaches <code>Authorization: Bearer &lt;token&gt;</code> to each API call.</li>
+    <li>The route resolves the user, then asks the RBAC helpers which documents are visible.</li>
+    <li>MongoDB queries include the division/access clause; results are serialized with per-document
+    capability flags (<code>has_download_access</code>, <code>can_manage</code>, <code>request_status</code>).</li>
+    <li>The JavaScript module renders the response, showing or hiding actions based on those flags — while
+    the server independently re-checks every mutating request.</li>
+  </ol>
+
+  <div class="callout">
+    <strong>Design choice.</strong> Page routes render shells only; data always arrives through the JSON
+    API. That keeps the UI and the API consistent, makes the assignment's API testable without the browser,
+    and avoids duplicating authorization rules between server-rendered pages and endpoints.
+  </div>
+
+  <h3>Deployment topology</h3>
+  <ul>
+    <li><strong>Local review</strong> — the Flask development server connects to a MongoDB instance on the
+    host. Suitable for development and for running the pytest suite.</li>
+    <li><strong>Containerised</strong> — Docker Compose starts MongoDB with a healthcheck and a gunicorn
+    container (two workers) that waits for the database. Tesseract is installed in the image, so OCR
+    behaves identically to a local install.</li>
+    <li><strong>Configuration</strong> — both topologies read the same environment variables; only
+    <code>MONGO_URI</code> differs (<code>localhost</code> vs the <code>mongo</code> service name).</li>
+  </ul>
+
+  <h3>Application structure</h3>
+  <table>
+    <tr><th style="width:32%">Module</th><th>Responsibility</th></tr>
+    <tr><td><code>app/__init__.py</code></td><td>Application factory, blueprint registration, JSON error handlers, startup defaults.</td></tr>
+    <tr><td><code>app/config.py</code></td><td>Environment-driven configuration: Mongo URI, secrets, upload size, OCR limits.</td></tr>
+    <tr><td><code>app/db.py</code></td><td>MongoClient and GridFSBucket wiring, one bucket named <code>documents</code>.</td></tr>
+    <tr><td><code>app/models.py</code></td><td>Collection names, indexes, default divisions and metadata fields.</td></tr>
+    <tr><td><code>app/auth.py</code></td><td>Register, login, profile, JWT creation and request-time user resolution.</td></tr>
+    <tr><td><code>app/routes.py</code></td><td>Document CRUD, upload, download, archive, delete, access requests, search, stats, metadata and divisions.</td></tr>
+    <tr><td><code>app/utils.py</code></td><td><code>accessible_filter</code>, <code>has_download_access</code>, <code>can_manage_document</code>, serializers, pagination, auth decorators.</td></tr>
+    <tr><td><code>app/ocr.py</code></td><td>Text-layer extraction, Tesseract fallback, thumbnail generation, Tesseract discovery.</td></tr>
+    <tr><td><code>app/seed.py</code></td><td>Idempotent demo users for local review.</td></tr>
+    <tr><td><code>app/views.py</code></td><td>Six server-rendered page routes.</td></tr>
+    <tr><td><code>app/static/js/</code></td><td>API client plus one module per view; shared theme and UI helpers.</td></tr>
+  </table>
+
+  <h3>Design principles</h3>
+  <ul>
+    <li><strong>Server-authoritative permissions.</strong> The UI hides actions it knows will fail, but the
+    server never relies on that: every read and write reconstructs the caller's access.</li>
+    <li><strong>Data over code.</strong> Metadata fields and divisions are records, not constants. Operators
+    can evolve the schema without a deployment.</li>
+    <li><strong>Nothing hidden.</strong> Uploads, downloads, requests, decisions and lifecycle changes are
+    appended to a document timeline rather than overwritten.</li>
+    <li><strong>Portable by default.</strong> No external services beyond MongoDB and optional Tesseract;
+    the whole stack starts with one command.</li>
+  </ul>
+</section>
+
+<!-- ============================= 4. DATA MODEL ============================= -->
+<section class="page">
+  <h2>4 · Data model</h2>
+
+  <p>Five collections hold the system state. Indexes are created at startup and are safe to re-run.</p>
+
+  <h3>users</h3>
+  <table>
+    <tr><th style="width:26%">Field</th><th>Type / notes</th></tr>
+    <tr><td><code>_id</code></td><td>ObjectId</td></tr>
+    <tr><td><code>name</code></td><td>Display name</td></tr>
+    <tr><td><code>email</code></td><td>Unique index; used as the login identifier</td></tr>
+    <tr><td><code>password_hash</code></td><td>Werkzeug PBKDF2 hash — plaintext is never stored</td></tr>
+    <tr><td><code>division</code></td><td>Division name; the basis of isolation</td></tr>
+    <tr><td><code>role</code></td><td><code>user</code> or <code>admin</code></td></tr>
+    <tr><td><code>created_at</code></td><td>UTC timestamp</td></tr>
+  </table>
+
+  <h3>documents</h3>
+  <table>
+    <tr><th style="width:26%">Field</th><th>Type / notes</th></tr>
+    <tr><td><code>_id</code></td><td>ObjectId</td></tr>
+    <tr><td><code>title</code>, <code>filename</code></td><td>Human title and original file name</td></tr>
+    <tr><td><code>description</code></td><td>Optional free-text note</td></tr>
+    <tr><td><code>division</code></td><td>Owning division (from the uploader)</td></tr>
+    <tr><td><code>uploaded_by</code> / <code>uploader_name</code></td><td>Owner identity; drives manage rights</td></tr>
+    <tr><td><code>gridfs_id</code></td><td>GridFS file id of the original binary</td></tr>
+    <tr><td><code>content_type</code>, <code>size</code></td><td>MIME type and byte size</td></tr>
+    <tr><td><code>metadata</code></td><td>Sub-document of dynamic fields, e.g. <code>{"Report Type": "Financial"}</code></td></tr>
+    <tr><td><code>ocr_text</code>, <code>ocr_status</code>, <code>ocr_engine</code></td><td>Extracted text and how it was produced</td></tr>
+    <tr><td><code>thumbnail</code></td><td>Small JPEG preview of the first PDF page or image, returned inline as a data URL</td></tr>
+    <tr><td><code>activity</code></td><td>Audit timeline: uploaded, requested, approved, rejected, downloaded, archived, restored</td></tr>
+    <tr><td><code>archived</code></td><td>Boolean; archived documents are hidden unless explicitly requested</td></tr>
+    <tr><td><code>created_at</code>, <code>updated_at</code></td><td>UTC timestamps</td></tr>
+  </table>
+
+  <h3>access_requests</h3>
+  <table>
+    <tr><th style="width:26%">Field</th><th>Type / notes</th></tr>
+    <tr><td><code>doc_id</code></td><td>Target document</td></tr>
+    <tr><td><code>requester_id</code>, <code>requester_name</code>, <code>requester_division</code></td><td>Who asked</td></tr>
+    <tr><td><code>owner_division</code></td><td>Division that must decide — powers the inbox index</td></tr>
+    <tr><td><code>status</code></td><td><code>pending</code> · <code>approved</code> · <code>rejected</code></td></tr>
+    <tr><td><code>decided_by</code>, <code>decided_at</code></td><td>Decision audit</td></tr>
+    <tr><td><code>created_at</code>, <code>updated_at</code></td><td>UTC timestamps</td></tr>
+  </table>
+
+  <h3>metadata_fields and divisions</h3>
+  <p><code>metadata_fields</code> stores <code>key</code> (unique, immutable), <code>label</code>,
+  <code>type</code> (<code>text</code>, <code>select</code>, <code>date</code>, <code>number</code>),
+  <code>options</code>, <code>required</code> and <code>order</code>. <code>divisions</code> is a simple
+  unique list of division names. Both are seeded on first start and thereafter managed by admins.</p>
+
+  <h3>Indexes</h3>
+  <ul>
+    <li><code>users.email</code> unique · <code>divisions.name</code> unique · <code>metadata_fields.key</code> unique</li>
+    <li><code>documents(division, created_at desc)</code> for dashboard browsing; <code>documents.uploaded_by</code> for "my uploads"</li>
+    <li><code>access_requests(doc_id, requester_id, status)</code> for duplicate detection;
+        <code>(owner_division, status)</code> for the inbox; <code>(requester_id, created_at desc)</code> for the outbox</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Why GridFS?</strong> Storing binaries in GridFS keeps file bytes out of BSON documents,
+    supports files larger than the 16 MB document limit, and allows streaming downloads without loading
+    the whole file into memory.
+  </div>
+</section>
+
+<!-- ============================= 5. RBAC ============================= -->
+<section class="page">
+  <h2>5 · Roles, division isolation and access requests</h2>
+
+  <h3>Roles</h3>
+  <table>
+    <tr><th style="width:22%">Role</th><th>Capabilities</th></tr>
+    <tr><td><code>user</code></td><td>Sign in; upload into own division; browse and download own-division documents and approved shared documents; request cross-division access; manage (archive/delete) documents they uploaded.</td></tr>
+    <tr><td><code>admin</code></td><td>Everything a user can do, plus: manage metadata fields and divisions; archive or delete any document in their division; approve or reject requests that target their division.</td></tr>
+  </table>
+  <p class="small">Admin status is granted at registration when the email appears in <code>ADMIN_EMAILS</code> (default <code>admin@triad.ai</code>).</p>
+
+  <h3>Isolation rules</h3>
+  <ol>
+    <li><strong>Visibility.</strong> A list or search only returns documents whose <code>division</code> equals
+    the caller's division, or documents for which the caller holds an approved request.</li>
+    <li><strong>Download.</strong> Allowed for the uploader, any member of the owning division, and approved requesters.</li>
+    <li><strong>Upload.</strong> An authenticated upload always lands in the uploader's division; supplying a
+    different division is rejected with <code>403</code>.</li>
+    <li><strong>Management.</strong> Archive, restore and delete require the uploader or an admin; the server
+    verifies this independently of what the UI shows.</li>
+  </ol>
+
+  <h3>The cross-division request workflow</h3>
+<pre>
+  Requester (Division B)                 Owner (Division A)
+  ─────────────────────                  ──────────────────
+  1. Finds the document via share link
+     or search result
+  2. POST /api/access/request ─────────► 3. Request appears in the
+     status = pending                       division's inbox
+                                          4. Approve or reject
+  6. Document now visible,        ◄──────    (POST /api/access/approve
+     downloadable and searchable            or /api/access/reject)
+     for this requester
+</pre>
+  <ul>
+    <li>The request records both divisions and the requester, so the inbox is scoped by
+    <code>owner_division</code>; the requester cannot decide their own request.</li>
+    <li>Duplicate pending or approved requests are returned as-is instead of creating duplicates.</li>
+    <li>Requesting access to a document in your own division is rejected with <code>400</code> — it is already visible.</li>
+    <li>Approval and rejection are written to the document's activity timeline, alongside upload, download,
+    archive and restore events, so every change has an audit trail.</li>
+    <li>A rejected request can be re-filed later; the previous decision remains visible in the outbox.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Coverage.</strong> These rules are exercised by dedicated pytest cases:
+    <code>test_division_isolation</code>, <code>test_access_request_approval_workflow</code> and
+    <code>test_rejection_and_reapply</code>.
+  </div>
+</section>
+
+<!-- ============================= 6. METADATA ============================= -->
+<section class="page">
+  <h2>6 · Dynamic metadata</h2>
+
+  <p>Traditional DMS designs hard-code columns such as <em>department</em> or <em>report type</em>. Aegis
+  instead treats metadata as data. Each field definition has a stable key, a label, an input type and,
+  for select fields, a set of options. The application never imports a field list; it reads the collection
+  whenever it needs one.</p>
+
+  <h3>How a field flows through the system</h3>
+  <ol>
+    <li><strong>Admin creates or edits a field</strong> in Admin Settings
+    (<code>POST/PUT/DELETE /api/metadata-fields</code>). The key is immutable once created, so stored values
+    never lose their meaning.</li>
+    <li><strong>The upload form</strong> fetches the fields and renders the correct control — text input,
+    select menu, date picker or number input — with required-field validation.</li>
+    <li><strong>The upload endpoint</strong> stores only keys that exist in the registry, under the document's
+    <code>metadata</code> sub-document.</li>
+    <li><strong>The dashboard and advanced search</strong> build filters from the same registry, so a new
+    field is immediately filterable.</li>
+    <li><strong>The list endpoint</strong> translates a query parameter that matches a field key into a
+    <code>metadata.&lt;Key&gt;</code> equality filter. The assignment's example,
+    <code>?Report%20Type=Financial</code>, works exactly this way.</li>
+  </ol>
+
+  <h3>Default registry</h3>
+  <table>
+    <tr><th>Key</th><th>Type</th><th>Options</th><th>Required</th></tr>
+    <tr><td>Report Type</td><td>select</td><td>Financial, HR, Technical, Legal, Operations</td><td>No</td></tr>
+    <tr><td>Author</td><td>text</td><td>—</td><td>No</td></tr>
+    <tr><td>Document Date</td><td>date</td><td>—</td><td>No</td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Tested behaviour.</strong> <code>test_admin_metadata_fields_lifecycle_and_dynamic_filtering</code>
+    creates a field through the API, uploads a document using it, filters the list by that field, and deletes
+    the field — proving the pipeline is genuinely dynamic rather than seeded.
+  </div>
+</section>
+
+<!-- ============================= 7. OCR ============================= -->
+<section class="page">
+  <h2>7 · OCR pipeline and search</h2>
+
+  <p>Search is only as good as the text it can see. Aegis extracts text at upload time and stores it with the
+  document, so search stays fast and does not depend on re-rendering files.</p>
+
+  <h3>Pipeline</h3>
+  <ol>
+    <li><strong>Plain text</strong> — <code>.txt</code> files are read directly.</li>
+    <li><strong>PDF text layer</strong> — pypdf extracts embedded text. If it contains meaningful content
+    (digital-born PDFs), OCR is skipped.</li>
+    <li><strong>Rendered OCR</strong> — scanned PDFs are rendered page-by-page with PyMuPDF and passed to
+    Tesseract, up to <code>OCR_MAX_PAGES</code>.</li>
+    <li><strong>Images</strong> — EXIF orientation is corrected, then Tesseract is run directly.</li>
+    <li><strong>Status recording</strong> — every document stores <code>ocr_status</code>
+    (<code>extracted</code>, <code>ocr</code>, <code>empty</code>, <code>unavailable</code>,
+    <code>failed</code>, <code>skipped</code>) and the engine used, so the UI can explain the outcome.</li>
+  </ol>
+
+  <p>Tesseract discovery is defensive: the app checks <code>TESSERACT_CMD</code>, then <code>PATH</code>,
+  then the standard Windows install locations. If Tesseract is absent, uploads still succeed and are marked
+  <code>unavailable</code> rather than failing.</p>
+
+  <h3>Thumbnails and previews</h3>
+  <p>At upload, the first page of a PDF or the image itself is downscaled with Pillow into a small JPEG and
+  stored on the document record. The API returns it inline as a data URL, so dashboard tiles render without
+  extra requests. Clicking a document opens an in-app modal that fetches the original as an authenticated
+  blob. No document is ever exposed through a public URL.</p>
+
+  <h3>What search covers</h3>
+  <table>
+    <tr><th style="width:30%">Source</th><th>Example match</th></tr>
+    <tr><td>Title and description</td><td>“Q3 Financial Summary”</td></tr>
+    <tr><td>Metadata values</td><td>Report Type = Financial, Author = Alice</td></tr>
+    <tr><td>OCR text</td><td>A phrase inside a scanned invoice or signed contract</td></tr>
+  </table>
+  <p>Results include a highlighted snippet around the match, so users can judge relevance before opening
+  the document. The search is scoped by the same access rules as the dashboard: you can only find what you
+  are allowed to see.</p>
+
+  <div class="callout">
+    <strong>Verified on both hosts.</strong> With Tesseract 5.4 installed locally and 5.5 inside the Docker
+    image, a scanned PDF was uploaded and returned <code>ocr_status: "ocr"</code>, and a phrase visible only
+    in the scanned image was found by search. The related test is <code>test_ocr_search_and_metadata_search</code>.
+  </div>
+</section>
+
+<!-- ============================= 8. UI ============================= -->
+<section class="page">
+  <h2>8 · User interface walkthrough</h2>
+
+  <p>The UI uses Bootstrap 5 as a layout and component base, then applies a custom design system: a deep
+  indigo brand palette, soft surfaces, CSS variables for theming, and skeleton loaders for asynchronous
+  panels. All six views fit a standard desktop browser at 100% zoom with no horizontal overflow; layouts
+  were checked at 1366, 1440 and 1920 px, and collapse cleanly on mobile.</p>
+
+  <figure class="no-break">
+    <img src="screenshots/login.png" alt="Login screen">
+    <figcaption><span class="tag">View 1</span>Authentication — split sign-in/registration with division selection and inline validation.</figcaption>
+  </figure>
+</section>
+
+<section class="page">
+  <figure class="no-break">
+    <img src="screenshots/dashboard.png" alt="Dashboard">
+    <figcaption><span class="tag">View 2</span>Document hub — stat cards, dynamic filters, sorting, pagination, thumbnail tiles, multi-file upload.</figcaption>
+  </figure>
+
+  <figure class="no-break">
+    <img src="screenshots/document-details.png" alt="Document details">
+    <figcaption><span class="tag">View 3</span>Document details — metadata table, OCR excerpt, activity timeline, download and manage actions.</figcaption>
+  </figure>
+</section>
+
+<section class="page">
+  <figure class="no-break">
+    <img src="screenshots/requests.png" alt="Access requests">
+    <figcaption><span class="tag">View 4</span>Access requests — incoming and outgoing tabs with pending counts and approve/reject actions.</figcaption>
+  </figure>
+
+  <figure class="no-break">
+    <img src="screenshots/search.png" alt="Advanced search">
+    <figcaption><span class="tag">View 5</span>Advanced search — one query across titles, metadata and OCR text, with highlighted snippets.</figcaption>
+  </figure>
+</section>
+
+<section class="page">
+  <figure class="no-break">
+    <img src="screenshots/admin.png" alt="Admin settings">
+    <figcaption><span class="tag">View 6</span>Admin settings — metadata field builder, division management, role-restricted.</figcaption>
+  </figure>
+
+  <figure class="no-break">
+    <img src="screenshots/dashboard-dark.png" alt="Dark mode dashboard">
+    <figcaption>Dark mode — one-click theme toggle, persisted per browser; every surface, table and badge has a dark variant.</figcaption>
+  </figure>
+</section>
+
+<section class="page">
+  <h2>Interface details</h2>
+
+  <h3>Interaction highlights</h3>
+  <ul>
+    <li><strong>Preview modal.</strong> PDFs and images open in-app from authenticated blob URLs; the empty
+    OCR panel is hidden when there is no text to show.</li>
+    <li><strong>Inline status.</strong> Upload progress, OCR status badges and toast notifications keep the
+    user informed without page reloads.</li>
+    <li><strong>Archived toggle.</strong> Archived documents disappear from the default list but can be
+    revealed and restored by their owner or an admin.</li>
+    <li><strong>Management menu.</strong> Archive/restore and delete actions are shown only when the
+    API's <code>can_manage</code> flag is true — and re-checked server-side.</li>
+    <li><strong>Responsive.</strong> Stat cards and filter rows reflow at narrow widths; the navbar collapses;
+    there is no horizontal scroll at 390 px.</li>
+  </ul>
+
+  <h3>Design system</h3>
+  <p>Colour, surface and border values are defined once as CSS variables, with a parallel set for the dark
+  theme. Components — cards, tables, pills, badges, modals and inputs — consume those variables rather than
+  hard-coded colours, which is why dark mode needed no per-page work. Bootstrap supplies behaviour and grid,
+  while the custom layer sets the visual identity: deep indigo accents, soft elevated surfaces, compact
+  tables, and consistent spacing at 4/8/16 px increments. Skeleton shimmer placeholders cover the dashboard
+  and requests panels while data loads, so the layout does not jump between empty and populated states.</p>
+  <p>Accessibility was considered in the palette: text/background pairs keep sufficient contrast in both
+  themes, status badges combine colour with labels (Pending, Approved, Rejected, Archived), and actions are
+  real buttons rather than colour-only indicators.</p>
+</section>
+
+<!-- ============================= 9. API ============================= -->
+<section class="page">
+  <h2>9 · REST API reference</h2>
+
+  <p>All JSON endpoints live under <code>/api</code>. Authenticated endpoints expect
+  <code>Authorization: Bearer &lt;token&gt;</code>. Errors use consistent JSON bodies with meaningful
+  HTTP status codes (<code>400</code>, <code>401</code>, <code>403</code>, <code>404</code>, <code>413</code>).</p>
+
+  <h3>Authentication</h3>
+  <table>
+    <tr><th style="width:30%">Method and path</th><th>Purpose</th></tr>
+    <tr><td><code>POST /api/auth/register</code></td><td><code>{name, email, password, division}</code> → <code>201</code> with <code>token</code> and <code>user</code></td></tr>
+    <tr><td><code>POST /api/auth/login</code></td><td><code>{email, password}</code> → <code>200</code> with <code>token</code> and <code>user</code></td></tr>
+    <tr><td><code>GET /api/auth/me</code></td><td>Current user profile</td></tr>
+  </table>
+
+  <h3>Documents</h3>
+  <table>
+    <tr><th style="width:38%">Method and path</th><th>Purpose</th></tr>
+    <tr><td><code>POST /api/documents/upload</code></td><td>Multipart <code>file</code> + JSON <code>metadata</code>. Division from the user, or from <code>metadata.Division</code> when anonymous. Returns <code>201</code>.</td></tr>
+    <tr><td><code>GET /api/documents</code></td><td>Division-scoped list with dynamic metadata filters, <code>division</code>, <code>archived</code>, <code>include_archived</code>, <code>sort</code>, <code>order</code>, <code>page</code>, <code>per_page</code>.</td></tr>
+    <tr><td><code>GET /api/documents/&lt;id&gt;</code></td><td>Details incl. <code>has_download_access</code>, <code>request_status</code>, <code>ocr_excerpt</code>, <code>thumbnail</code>, <code>activity</code>, <code>archived</code>, <code>can_manage</code>.</td></tr>
+    <tr><td><code>GET /api/documents/&lt;id&gt;/download</code></td><td>Streams the file from GridFS; <code>403</code> without permission.</td></tr>
+    <tr><td><code>POST /api/documents/&lt;id&gt;/archive</code></td><td><code>{archived: true|false}</code> — uploader or admin; returns the updated document.</td></tr>
+    <tr><td><code>DELETE /api/documents/&lt;id&gt;</code></td><td>Uploader or admin; removes the GridFS file, record and related access requests.</td></tr>
+    <tr><td><code>GET /api/stats</code></td><td>Dashboard counters: visible documents, my uploads, OCR indexed, OCR coverage, pending incoming/outgoing.</td></tr>
+  </table>
+
+  <h3 style="page-break-before: always">Access requests</h3>
+  <table>
+    <tr><th style="width:38%">Method and path</th><th>Purpose</th></tr>
+    <tr><td><code>POST /api/access/request</code></td><td><code>{doc_id}</code> — creates or returns the existing request.</td></tr>
+    <tr><td><code>POST /api/access/approve</code></td><td><code>{request_id}</code> — owning division only.</td></tr>
+    <tr><td><code>POST /api/access/reject</code></td><td><code>{request_id}</code> — owning division only.</td></tr>
+    <tr><td><code>GET /api/access/requests</code></td><td><code>?type=incoming|outgoing|all</code>, with pending counts.</td></tr>
+  </table>
+
+  <h3>Search, metadata and divisions</h3>
+  <table>
+    <tr><th style="width:38%">Method and path</th><th>Purpose</th></tr>
+    <tr><td><code>GET /api/search?q=</code></td><td>Searches title, metadata and OCR text across accessible documents; returns highlighted snippets.</td></tr>
+    <tr><td><code>GET /api/metadata-fields</code></td><td>List dynamic fields in display order.</td></tr>
+    <tr><td><code>POST /api/metadata-fields</code></td><td>Admin: create <code>{key, label, type, options, required, order}</code>.</td></tr>
+    <tr><td><code>PUT /api/metadata-fields/&lt;id&gt;</code></td><td>Admin: update — the key is immutable.</td></tr>
+    <tr><td><code>DELETE /api/metadata-fields/&lt;id&gt;</code></td><td>Admin: delete a field definition.</td></tr>
+    <tr><td><code>GET /api/divisions</code></td><td>List divisions (public, used by registration).</td></tr>
+    <tr><td><code>POST /api/divisions</code></td><td>Admin: create a division.</td></tr>
+    <tr><td><code>GET /api/health</code></td><td>Application and database health.</td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Filtering example.</strong>
+    <code>GET /api/documents?Report%20Type=Financial&amp;sort=created_at&amp;order=desc&amp;page=1&amp;per_page=12</code>
+    — the first parameter is resolved against the live metadata registry.
+  </div>
+</section>
+
+<!-- ============================= 10. SETUP ============================= -->
+<section class="page">
+  <h2>10 · Running the project</h2>
+
+  <h3>Option A — Docker (recommended for a quick review)</h3>
+  <pre>docker compose up --build</pre>
+  <p>This starts MongoDB 7, seeds the demo accounts, and serves the application at
+  <code>http://localhost:5000</code>. The image installs Tesseract, so scanned documents are OCR'd inside
+  the container. Stop with Ctrl+C, or run detached with <code>docker compose up -d --build</code>.</p>
+
+  <h3>Option B — local Python</h3>
+  <p>Prerequisites: Python 3.11+, MongoDB on <code>localhost:27017</code>, and Tesseract for scanned files.</p>
+  <pre>python -m venv .venv
+.venv\Scripts\activate            # Windows
+pip install -r requirements-dev.txt
+python -m app.seed                # optional demo users
+python run.py</pre>
+  <p>Open <code>http://localhost:5000</code>. Configuration is environment-driven; copy
+  <code>.env.example</code> to <code>.env</code> to override defaults such as <code>MONGO_URI</code>,
+  <code>JWT_SECRET</code>, <code>MAX_CONTENT_MB</code> or <code>TESSERACT_CMD</code>.</p>
+
+  <h3>Installing Tesseract on Windows</h3>
+  <p>Install with <code>winget install UB-Mannheim.TesseractOCR</code>, or download the UB Mannheim build.
+  The app auto-detects <code>C:\Program Files\Tesseract-OCR\tesseract.exe</code>; otherwise set
+  <code>TESSERACT_CMD</code> in <code>.env</code>. Restart the app after installing.</p>
+
+  <h3>Demo accounts</h3>
+  <table>
+    <tr><th>Email</th><th>Password</th><th>Division</th><th>Role</th></tr>
+    <tr><td><code>admin@triad.ai</code></td><td><code>admin123</code></td><td>Division A</td><td>admin</td></tr>
+    <tr><td><code>alice@triad.ai</code></td><td><code>alice123</code></td><td>Division A</td><td>user</td></tr>
+    <tr><td><code>bob@triad.ai</code></td><td><code>bob123</code></td><td>Division B</td><td>user</td></tr>
+  </table>
+  <p class="small">New registrations default to the <code>user</code> role; emails in <code>ADMIN_EMAILS</code> register as admin.</p>
+
+  <h3>Key configuration</h3>
+  <table>
+    <tr><th style="width:34%">Variable</th><th>Default</th><th>Purpose</th></tr>
+    <tr><td><code>MONGO_URI</code></td><td><code>mongodb://localhost:27017</code></td><td>MongoDB connection</td></tr>
+    <tr><td><code>MONGO_DB</code></td><td><code>triad_dms</code></td><td>Database name</td></tr>
+    <tr><td><code>JWT_EXPIRES_HOURS</code></td><td>24</td><td>Token lifetime</td></tr>
+    <tr><td><code>MAX_CONTENT_MB</code></td><td>25</td><td>Upload size limit</td></tr>
+    <tr><td><code>REQUIRE_AUTH_FOR_UPLOAD</code></td><td>false</td><td>Starter-test compatibility</td></tr>
+    <tr><td><code>OCR_ENABLED</code> / <code>OCR_MAX_PAGES</code></td><td>true / 15</td><td>OCR toggle and page cap</td></tr>
+    <tr><td><code>TESSERACT_CMD</code></td><td>auto-detected</td><td>Explicit Tesseract path</td></tr>
+    <tr><td><code>SEED_DEFAULTS</code></td><td>true</td><td>Seed divisions and metadata fields at startup</td></tr>
+  </table>
+
+  <h3>Troubleshooting</h3>
+  <table>
+    <tr><th style="width:36%">Symptom</th><th>Fix</th></tr>
+    <tr><td><code>ServerSelectionTimeoutError</code></td><td>MongoDB is not running; start it or use Docker Compose.</td></tr>
+    <tr><td>OCR status <code>unavailable</code></td><td>Install Tesseract, set <code>TESSERACT_CMD</code>, restart.</td></tr>
+    <tr><td>Port 5000 in use</td><td>Stop the other process or choose another port.</td></tr>
+    <tr><td>Upload returns <code>413</code></td><td>File exceeds <code>MAX_CONTENT_MB</code>.</td></tr>
+    <tr><td>Docker credential helper error</td><td>Add Docker's <code>resources\bin</code> to <code>PATH</code> and reopen the terminal.</td></tr>
+  </table>
+</section>
+
+<!-- ============================= 11. TESTING ============================= -->
+<section class="page">
+  <h2>11 · Testing and verification</h2>
+
+  <p>Testing is split between an integration suite that exercises the real HTTP API against a temporary
+  MongoDB database, and the assignment's own smoke test.</p>
+
+  <h3>pytest suite — 10 integration tests</h3>
+  <table>
+    <tr><th style="width:44%">Test</th><th>Covers</th></tr>
+    <tr><td><code>test_register_login_and_me</code></td><td>Registration, duplicate handling, login, profile via JWT</td></tr>
+    <tr><td><code>test_anonymous_upload_compatibility_and_auth_required_for_reading</code></td><td>Starter-test upload path; unauthenticated reads rejected</td></tr>
+    <tr><td><code>test_division_isolation</code></td><td>Divisions cannot see or download each other's documents</td></tr>
+    <tr><td><code>test_metadata_storage_and_filters</code></td><td>Dynamic metadata persisted and used as list filters</td></tr>
+    <tr><td><code>test_ocr_search_and_metadata_search</code></td><td>OCR text and metadata both searchable, snippets returned</td></tr>
+    <tr><td><code>test_access_request_approval_workflow</code></td><td>Request → approve → visibility and download for requester</td></tr>
+    <tr><td><code>test_rejection_and_reapply</code></td><td>Rejection stays closed; a new request can be filed</td></tr>
+    <tr><td><code>test_admin_metadata_fields_lifecycle_and_dynamic_filtering</code></td><td>Create → use → filter → delete a metadata field</td></tr>
+    <tr><td><code>test_admin_can_add_divisions_and_register_into_them</code></td><td>Division management and registration into a new division</td></tr>
+    <tr><td><code>test_health_endpoint</code></td><td>App and database health reporting</td></tr>
+  </table>
+  <pre>python -m pytest tests -q
+# 10 passed</pre>
+
+  <h3 style="page-break-before: always">Assignment smoke test</h3>
+  <pre>python test_api.py
+# Summary written to test_report.txt
+# Total Endpoints Tested: 1 · Passed: 1 · Failed: 0</pre>
+
+  <h3>Manual verification</h3>
+  <ul>
+    <li>Ran the Docker stack and captured all six views plus dark mode at 1440×900.</li>
+    <li>Confirmed no horizontal overflow at 1366, 1440, 1920 and 390 px widths.</li>
+    <li>Uploaded a scanned PDF: <code>ocr_status</code> became <code>ocr</code> and its text was searchable.</li>
+    <li>Exercised approve/reject, archive/restore, delete, preview modal and theme persistence in the browser.</li>
+    <li>Verified the timeline records uploads, requests, decisions, downloads, archive and restore events.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Isolation in tests.</strong> The suite creates a randomly named database per run and drops it
+    afterwards, so test runs never touch local development data.
+  </div>
+</section>
+
+<!-- ============================= 12. SECURITY ============================= -->
+<section class="page">
+  <h2>12 · Security considerations</h2>
+
+  <table>
+    <tr><th style="width:30%">Concern</th><th>Approach</th></tr>
+    <tr><td>Passwords</td><td>Hashed with Werkzeug's PBKDF2 implementation; plaintext never stored or logged.</td></tr>
+    <tr><td>Sessions</td><td>Stateless HS256 JWTs with an expiry; the secret is configuration, not code.</td></tr>
+    <tr><td>Authorization</td><td>Central helpers in <code>utils.py</code>; every endpoint re-checks access rather than trusting client state.</td></tr>
+    <tr><td>Document confidentiality</td><td>Downloads and thumbnails stream through authenticated endpoints; there are no public file URLs.</td></tr>
+    <tr><td>Upload constraints</td><td>Size limit, required file part, server-derived division for authenticated users.</td></tr>
+    <tr><td>Duplicate and self-approval</td><td>Duplicates are deduplicated; requesters cannot approve their own request; requests within the owner division are rejected.</td></tr>
+    <tr><td>Auditability</td><td>Every sensitive action is appended to the document timeline.</td></tr>
+    <tr><td>Injection</td><td>Queries are built from typed Python values through PyMongo; metadata keys are validated against the registry.</td></tr>
+  </table>
+
+  <h3>Production hardening</h3>
+  <p>The defaults are tuned for local review. For production: set strong <code>SECRET_KEY</code> and
+  <code>JWT_SECRET</code> values, enable <code>REQUIRE_AUTH_FOR_UPLOAD=true</code>, terminate TLS in front of
+  gunicorn, restrict MongoDB network access, and move tokens from <code>localStorage</code> to HttpOnly
+  cookies if cross-site scripting is a concern. These are documented rather than silently assumed.</p>
+</section>
+
+<!-- ============================= 13. ENHANCEMENTS ============================= -->
+<section class="page">
+  <h2>13 · Enhancements beyond the brief</h2>
+
+  <p>The assignment defined a minimum feature set. Several additional capabilities were added because they
+  materially improve the system rather than just widening the surface:</p>
+
+  <table>
+    <tr><th style="width:30%">Enhancement</th><th>Why it matters</th></tr>
+    <tr><td>Private previews and thumbnails</td><td>Reviewing a document no longer requires downloading it; previews remain permission-checked.</td></tr>
+    <tr><td>Activity timeline</td><td>Turns every document into an auditable record of who uploaded, requested, downloaded or changed it.</td></tr>
+    <tr><td>Archive, restore and delete</td><td>Lifecycle management without losing the audit trail; archived items are hidden by default.</td></tr>
+    <tr><td>Dashboard statistics</td><td>Immediate visibility into document count, personal uploads, OCR coverage and pending requests.</td></tr>
+    <tr><td>Dark mode</td><td>Persisted theme with complete component coverage — not just an inverted page background.</td></tr>
+    <tr><td>Multi-file upload</td><td>Batch classification with one metadata set, reducing repetitive work.</td></tr>
+    <tr><td>Skeleton loaders and toasts</td><td>Clear feedback during asynchronous calls, with nothing jumping on completion.</td></tr>
+    <tr><td>Docker packaging</td><td>Reviewers can run the whole stack, including OCR, with one command.</td></tr>
+    <tr><td>Health endpoint</td><td>Makes deployment checks and monitoring trivial.</td></tr>
+    <tr><td>Responsive layout</td><td>Usable at laptop widths and on phones without zooming out.</td></tr>
+  </table>
+
+  <p>These additions are deliberately cohesive: thumbnails feed previews, previews feed the timeline,
+  the timeline feeds the details view, and the stats endpoint summarizes the same access rules as the list.
+  None of them weaken the core authorization model.</p>
+</section>
+
+<!-- ============================= 14. LIMITS ============================= -->
+<section class="page">
+  <h2>14 · Limitations and future work</h2>
+
+  <h3>Current limitations</h3>
+  <ul>
+    <li><strong>OCR throughput.</strong> OCR runs synchronously during upload. Large scans take time; the
+    per-page and page-count limits keep this bounded, but a background worker would be the next step.</li>
+    <li><strong>Search implementation.</strong> Search uses case-insensitive matching over accessible
+    documents rather than a dedicated text index. It is accurate and simple, but a MongoDB text or Atlas
+    Search index would scale better.</li>
+    <li><strong>Token storage.</strong> The UI stores JWTs in <code>localStorage</code> for simplicity;
+    HttpOnly cookies with CSRF protection are preferable for a public deployment.</li>
+    <li><strong>Single-node MongoDB.</strong> The Compose file runs one MongoDB instance; production would
+    use a replica set for durability.</li>
+    <li><strong>Deletion is immediate.</strong> There is no recovery window or soft-delete retention policy
+    beyond archiving.</li>
+  </ul>
+
+  <h3>Future work</h3>
+  <ul>
+    <li>Queue OCR jobs and stream status updates to the UI.</li>
+    <li>Add version history for documents and per-field change tracking.</li>
+    <li>Introduce finer-grained roles (auditor, division manager) and time-boxed access grants.</li>
+    <li>Add bulk metadata editing, saved searches and CSV export of search results.</li>
+    <li>Integrate a full-text index and semantic search over OCR text.</li>
+  </ul>
+
+  <h2 style="margin-top:12mm">Conclusion</h2>
+  <p>Aegis DMS meets the assignment's functional requirements and goes further in the areas that matter
+  for real use: permissions are enforced consistently, metadata is genuinely dynamic, scanned documents are
+  searchable, and every sensitive action leaves a trace. The result is a compact codebase — roughly 4,200
+  lines across backend, front end, styles and tests — that is easy to run, review and extend.</p>
+
+  <div class="callout">
+    <strong>Deliverables.</strong> Source code and this README live in the repository root; screenshots are
+    in <code>docs/screenshots/</code>; this report is included as <code>Aegis-DMS-Project-Report.pdf</code>;
+    the passing starter test summary is in <code>test_report.txt</code>.
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% set standalone = true %}
+{% block title %}{{ code }}{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-center min-vh-100 p-4">
+  <div class="auth-card text-center">
+    <div class="display-4 fw-bold text-primary">{{ code }}</div>
+    <p class="text-muted mb-4">{{ message }}</p>
+    <a href="/" class="btn btn-primary px-4">Back to dashboard</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Advanced search{% endblock %}
+{% block content %}
+<div class="container py-4 py-lg-5">
+  <div class="search-hero mb-4">
+    <div class="eyebrow text-white-50"><i class="bi bi-stars"></i> OCR-powered search</div>
+    <h1 class="h2 fw-bold text-white mb-1">Find anything, even inside scans.</h1>
+    <p class="text-white-50 mb-4">Search titles, dynamic metadata and OCR-extracted content across documents you can access.</p>
+    <form id="searchForm" class="search-bar">
+      <i class="bi bi-search"></i>
+      <input id="searchInput" type="search" placeholder="e.g. quarterly budget, invoice number, board minutes…" autocomplete="off">
+      <button class="btn btn-light fw-semibold" type="submit">Search</button>
+    </form>
+    <div id="searchFilters" class="row g-2 mt-3"></div>
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h5 fw-bold mb-0" id="resultsHeading">Search results</h2>
+    <span class="text-muted small" id="resultsMeta"></span>
+  </div>
+  <div id="searchError" class="alert alert-danger d-none"></div>
+  <div id="searchResults"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}
