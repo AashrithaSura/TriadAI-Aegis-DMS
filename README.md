@@ -1,4 +1,4 @@
-# Aegis DMS — by Triad AI
+# Aegis DMS
 
 **Aegis** (Greek: *shield*) is a Flask + MongoDB document management system built for the Triad AI internship assignment. It supports **dynamic custom metadata**, **role-based access with division isolation**, a **cross-division access-request workflow**, **OCR-powered search**, in-browser previews, and an adaptive dark-mode UI.
 
